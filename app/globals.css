@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+.custom-gradient-bg {
+  background: radial-gradient(125% 125% at 50% 100%, #000000 40%, #111150 100%);
+}
+
 body {
   background: rgb(14, 14, 14);
   color: white;
