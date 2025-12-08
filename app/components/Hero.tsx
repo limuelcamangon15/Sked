@@ -13,7 +13,10 @@ function Hero() {
       <div className="w-6/7">
         <h1 className="text-5xl font-semibold tracking-tight leading-tight">
           Smart Scheduling. Real-Time Microsoft Teams Sync. Powered by{" "}
-          <p className="inline tracking-tighter">Sked</p>.
+          <p className="inline bg-linear-to-r from-white to-gray-400 bg-clip-text text-transparent font-bold tracking-tighter">
+            Sked
+          </p>
+          .
         </h1>
 
         <p className="mt-6 text-lg text-neutral-600 max-w-lg">
