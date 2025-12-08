@@ -79,7 +79,7 @@ function LoginForm() {
               Log in
             </button>
             <p className="text-center text-white/50 tracking-normal">
-              Don't have an account?{" "}
+              Don &apos; t have an account?{" "}
               <Link
                 href={"/signup"}
                 className="text-white hover:text-white/70 transition-all duration-300"
