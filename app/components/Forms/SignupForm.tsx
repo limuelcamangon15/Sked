@@ -1,9 +1,70 @@
+"use client";
+
+import { supabase } from "@/app/lib/supabase";
 import Link from "next/link";
+import { useState } from "react";
+
+type User = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+};
 
 function SignupForm() {
+  const [user, setUser] = useState<User>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+
+  async function handleSignup(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!user.firstName || !user.lastName || !user.email || !user.password) {
+      console.log("pls fill all");
+    }
+
+    const { data: queryData } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", user.email)
+      .maybeSingle();
+
+    console.log(queryData);
+
+    if (queryData) return console.error("this user already exist");
+
+    const { data: signupData, error: signupError } = await supabase.auth.signUp(
+      {
+        email: user.email,
+        password: user.password,
+      }
+    );
+
+    if (signupError)
+      return console.error("something went wrong signing up", signupError);
+
+    await supabase.from("users").insert({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    });
+
+    setUser({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    });
+
+    return console.log("signup success, user created!!!!!");
+  }
+
   return (
     <>
-      <div className="flex gap-5  w-full ">
+      <div className="flex gap-5 w-full ">
         <section className="hidden lg:flex items-center justify-center w-full">
           <div className="w-6/7">
             <div>
@@ -29,7 +90,10 @@ function SignupForm() {
           </div>
         </section>
 
-        <form className="flex flex-col gap-7 items-center justify-center w-full h-full tracking-wide">
+        <form
+          onSubmit={handleSignup}
+          className="flex flex-col gap-7 items-center justify-center w-full h-full tracking-wide"
+        >
           <div className="tracking-normal text-center">
             <h1 className="text-2xl">
               Create your{" "}
@@ -54,6 +118,13 @@ function SignupForm() {
               type="text"
               name="firstName"
               id="firstName"
+              value={user.firstName}
+              onChange={(e) =>
+                setUser({
+                  ...user,
+                  firstName: e.currentTarget.value,
+                })
+              }
               placeholder="Enter your first name"
               className="outline-0 rounded-lg p-3 bg-gray-900"
             />
@@ -70,6 +141,13 @@ function SignupForm() {
               type="text"
               name="lastName"
               id="lastName"
+              value={user.lastName}
+              onChange={(e) =>
+                setUser({
+                  ...user,
+                  lastName: e.currentTarget.value,
+                })
+              }
               placeholder="Enter your last name"
               className="outline-0 rounded-lg p-3 bg-gray-900"
             />
@@ -86,6 +164,13 @@ function SignupForm() {
               type="email"
               name="email"
               id="email"
+              value={user.email}
+              onChange={(e) =>
+                setUser({
+                  ...user,
+                  email: e.target.value,
+                })
+              }
               placeholder="sked@myemail.com"
               className="outline-0 rounded-lg p-3 bg-gray-900"
             />
@@ -102,13 +187,23 @@ function SignupForm() {
               type="password"
               name="password"
               id="password"
+              value={user.password}
+              onChange={(e) =>
+                setUser({
+                  ...user,
+                  password: e.target.value,
+                })
+              }
               placeholder="••••••••"
               className="outline-0 rounded-lg p-3 bg-gray-900 tracking-widest"
             />
           </div>
 
           <div className="w-100 md:w-1/2 flex flex-col gap-2">
-            <button className="w-full mt-5 py-4 px-6 cursor-pointer text-white bg-blue-950 rounded-lg hover:bg-blue-900 hover:text-white hover:scale-103 transition-all duration-300">
+            <button
+              type="submit"
+              className="w-full mt-5 py-4 px-6 cursor-pointer text-white bg-blue-950 rounded-lg hover:bg-blue-900 hover:text-white hover:scale-103 transition-all duration-300"
+            >
               Sign up
             </button>
             <p className="text-center text-white/50 tracking-normal">
