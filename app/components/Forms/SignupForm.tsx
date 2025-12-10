@@ -1,18 +1,15 @@
 "use client";
 
-import { supabase } from "@/app/lib/supabase";
+import { createUser } from "@/app/lib/actions/user";
+import { UserType } from "@/app/types/user";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-type User = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
-
 function SignupForm() {
-  const [user, setUser] = useState<User>({
+  const { push: redirect } = useRouter();
+
+  const [user, setUser] = useState<UserType>({
     firstName: "",
     lastName: "",
     email: "",
@@ -23,43 +20,30 @@ function SignupForm() {
     e.preventDefault();
 
     if (!user.firstName || !user.lastName || !user.email || !user.password) {
-      console.log("pls fill all");
+      alert("Please fill all fields");
+      return;
     }
 
-    const { data: queryData } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", user.email)
-      .maybeSingle();
-
-    console.log(queryData);
-
-    if (queryData) return console.error("this user already exist");
-
-    const { data: signupData, error: signupError } = await supabase.auth.signUp(
-      {
-        email: user.email,
-        password: user.password,
-      }
-    );
-
-    if (signupError)
-      return console.error("something went wrong signing up", signupError);
-
-    await supabase.from("users").insert({
+    const userData = {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-    });
+      password: user.password,
+    };
+    const result = await createUser(userData);
 
-    setUser({
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-    });
-
-    return console.log("signup success, user created!!!!!");
+    if (result?.success) {
+      alert("Signup success! User created.");
+      setUser({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+      });
+      redirect("/login");
+    } else {
+      alert(`Signup failed: ${result?.error || "Unknown error"}`);
+    }
   }
 
   return (
@@ -126,7 +110,7 @@ function SignupForm() {
                 })
               }
               placeholder="Enter your first name"
-              className="outline-0 rounded-lg p-3 bg-gray-900"
+              className="outline-0 rounded-lg p-3 bg-gray-900 placeholder:text-white/30"
             />
           </div>
 
@@ -149,7 +133,7 @@ function SignupForm() {
                 })
               }
               placeholder="Enter your last name"
-              className="outline-0 rounded-lg p-3 bg-gray-900"
+              className="outline-0 rounded-lg p-3 bg-gray-900 placeholder:text-white/30"
             />
           </div>
 
@@ -172,7 +156,7 @@ function SignupForm() {
                 })
               }
               placeholder="sked@myemail.com"
-              className="outline-0 rounded-lg p-3 bg-gray-900"
+              className="outline-0 rounded-lg p-3 bg-gray-900 placeholder:text-white/30"
             />
           </div>
 
@@ -195,7 +179,7 @@ function SignupForm() {
                 })
               }
               placeholder="••••••••"
-              className="outline-0 rounded-lg p-3 bg-gray-900 tracking-widest"
+              className="outline-0 rounded-lg p-3 bg-gray-900 tracking-widest placeholder:text-white/30"
             />
           </div>
 

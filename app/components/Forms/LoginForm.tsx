@@ -1,6 +1,31 @@
+"use client";
+
+import { supabase } from "@/app/lib/supabase";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 function LoginForm() {
+  const { push: redirect } = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (!error) redirect("/event");
+    } catch (error) {
+      console.error("error logging in", error);
+    }
+  }
+
   return (
     <>
       <div className="flex gap-5 w-full ">
@@ -29,7 +54,10 @@ function LoginForm() {
           </div>
         </section>
 
-        <form className="flex flex-col gap-7 items-center justify-center w-full h-full tracking-wide">
+        <form
+          onSubmit={handleLogin}
+          className="flex flex-col gap-7 items-center justify-center w-full h-full tracking-wide"
+        >
           <div className="tracking-normal text-center">
             <h1 className="text-2xl">
               Log in to{" "}
@@ -43,24 +71,23 @@ function LoginForm() {
           </div>
 
           <div className="flex flex-col gap-2 w-100 md:w-1/2">
-            <label
-              htmlFor="lastName"
-              className="text-sm font-thin text-white/70"
-            >
+            <label htmlFor="email" className="text-sm font-thin text-white/70">
               Email Address
             </label>
             <input
               type="email"
               name="email"
               id="email"
+              value={email}
+              onChange={(e) => setEmail(e.currentTarget.value)}
               placeholder="sked@myemail.com"
-              className="outline-0 rounded-lg p-3 bg-gray-900"
+              className="outline-0 rounded-lg p-3 bg-gray-900 placeholder:text-white/30"
             />
           </div>
 
           <div className="flex flex-col gap-2 w-100 md:w-1/2">
             <label
-              htmlFor="lastName"
+              htmlFor="password"
               className="text-sm font-thin text-white/70"
             >
               Password
@@ -69,13 +96,18 @@ function LoginForm() {
               type="password"
               name="password"
               id="password"
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
               placeholder="••••••••"
-              className="outline-0 rounded-lg p-3 bg-gray-900 tracking-widest"
+              className="outline-0 rounded-lg p-3 bg-gray-900 tracking-widest placeholder:text-white/30"
             />
           </div>
 
           <div className="w-100 md:w-1/2 flex flex-col gap-2">
-            <button className="w-full mt-5 py-4 px-6 cursor-pointer text-white bg-blue-950 rounded-lg hover:bg-blue-900 hover:text-white hover:scale-103 transition-all duration-300">
+            <button
+              type="submit"
+              className="w-full mt-5 py-4 px-6 cursor-pointer text-white bg-blue-950 rounded-lg hover:bg-blue-900 hover:text-white hover:scale-103 transition-all duration-300"
+            >
               Log in
             </button>
             <p className="text-center text-white/50 tracking-normal">
