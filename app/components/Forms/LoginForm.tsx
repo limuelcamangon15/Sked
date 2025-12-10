@@ -1,13 +1,13 @@
 "use client";
 
+import { loginUser } from "@/app/lib/actions/user";
 import { supabase } from "@/app/lib/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 function LoginForm() {
-  const { push: redirect } = useRouter();
-
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,14 +15,19 @@ function LoginForm() {
     e.preventDefault();
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const session = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (!error) redirect("/event");
+      console.log(session);
+
+      if (session) {
+        router.refresh();
+        router.push("/event");
+      }
     } catch (error) {
-      console.error("error logging in", error);
+      console.error("Login failed:", error);
     }
   }
 

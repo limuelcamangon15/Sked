@@ -19,7 +19,7 @@ function Default({ header, footer, children, className }: DefaultType) {
         {header}
         <AnimatePresence mode="wait">
           <motion.main
-            className={`${className} flex flex-1 w-full p-5`}
+            className={`${className} flex flex-1 w-full`}
             key={pathname}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

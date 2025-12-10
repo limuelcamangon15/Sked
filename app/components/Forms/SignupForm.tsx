@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 function SignupForm() {
-  const { push: redirect } = useRouter();
+  const router = useRouter();
 
   const [user, setUser] = useState<UserType>({
     firstName: "",
@@ -40,7 +40,7 @@ function SignupForm() {
         email: "",
         password: "",
       });
-      redirect("/login");
+      router.push("/login");
     } else {
       alert(`Signup failed: ${result?.error || "Unknown error"}`);
     }

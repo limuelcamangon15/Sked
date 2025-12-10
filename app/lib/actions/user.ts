@@ -3,6 +3,7 @@
 import { CreateUserType } from "@/app/types/user";
 import { supabase } from "../supabase";
 import { findUserByEmail, insertUser } from "../server/user";
+import { redirect } from "next/navigation";
 
 export async function createUser({
   firstName,
@@ -37,4 +38,15 @@ export async function createUser({
   } catch (error) {
     console.error("something went wrong creating user", error);
   }
+}
+
+export async function loginUser(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) throw error;
+
+  return data.session; // return session for client-side redirect
 }

@@ -1,7 +1,7 @@
-import React from "react";
+"use client";
+import Default from "../templates/Default";
+import EventsCalendar from "../components/Event/EventsCalendar";
 
-function Event() {
-  return <div>Event</div>;
+export default function EventPage() {
+  return <Default>{<EventsCalendar />}</Default>;
 }
-
-export default Event;
