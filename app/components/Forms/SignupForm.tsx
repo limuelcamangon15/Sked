@@ -81,7 +81,7 @@ function SignupForm() {
 
         <form
           onSubmit={handleSignup}
-          className="flex flex-col gap-7 items-center justify-center w-1/2 max-h-dvh tracking-wide"
+          className="flex flex-col gap-7 items-center justify-center w-full lg:w-1/2 max-h-dvh tracking-wide"
         >
           <div className="tracking-normal text-center">
             <h1 className="text-2xl">
