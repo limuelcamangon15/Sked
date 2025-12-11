@@ -8,6 +8,9 @@ import { supabase } from "@/app/lib/supabase";
 export default function EventsCalendar() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [holidays, setHolidays] = useState([]);
+  const [country, setCountry] = useState("PH");
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
     checkSession();
@@ -18,8 +21,36 @@ export default function EventsCalendar() {
       data: { session },
     } = await supabase.auth.getSession();
 
-    if (!session) router.push("/login");
-    else setLoading(false);
+    if (!session) {
+      router.push("/login");
+    } else {
+      await fetchHolidays(country);
+      setLoading(false);
+    }
+  }
+
+  async function fetchHolidays(
+    countryCode: string,
+    year: number = new Date().getFullYear()
+  ) {
+    try {
+      const res = await fetch(
+        `https://date.nager.at/api/v3/PublicHolidays/${year}/${countryCode}`
+      );
+
+      if (!res.ok)
+        throw new Error("failed fetching holiday for " + countryCode);
+      const data = await res.json();
+
+      const holidayEvents = data.map((holiday) => ({
+        title: holiday.localName,
+        date: holiday.date,
+      }));
+
+      setHolidays(holidayEvents);
+    } catch (error) {
+      console.error("Error fetching holidays:", error);
+    }
   }
 
   if (loading) return <p>Loading...</p>;
@@ -30,11 +61,14 @@ export default function EventsCalendar() {
           height="100%"
           plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
-          events={[
-            { title: "Christmas Day", date: "2025-12-25" },
-            { title: "Monthsary", date: "2025-12-04" },
-            { title: "Araw ng mga Bisaya", date: "2025-12-11" },
-          ]}
+          datesSet={(info) => {
+            const year = info.start.getFullYear();
+            if (year !== currentYear) {
+              setCurrentYear(year);
+              fetchHolidays(country, year);
+            }
+          }}
+          events={holidays}
         />
       </div>
 
