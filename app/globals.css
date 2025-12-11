@@ -29,7 +29,7 @@ body {
 /* full calendar */
 
 .fc {
-  @apply bg-white rounded-xl p-5;
+  @apply bg-white/50 rounded-xl p-5;
 }
 
 .fc table {
