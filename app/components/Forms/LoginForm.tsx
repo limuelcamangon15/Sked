@@ -34,7 +34,7 @@ function LoginForm() {
   return (
     <>
       <div className="flex gap-5 w-full ">
-        <section className="hidden lg:flex items-center justify-center w-full">
+        <section className="hidden lg:flex items-center justify-center w-1/2 max-h-dvh p-20">
           <div className="w-6/7">
             <div>
               <h1 className="text-5xl font-semibold tracking-tight leading-tight">
@@ -61,7 +61,7 @@ function LoginForm() {
 
         <form
           onSubmit={handleLogin}
-          className="flex flex-col gap-7 items-center justify-center w-full h-full tracking-wide"
+          className="flex flex-col gap-7 items-center justify-center w-1/2 min-h-dvh tracking-wide"
         >
           <div className="tracking-normal text-center">
             <h1 className="text-2xl">

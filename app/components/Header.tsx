@@ -11,17 +11,12 @@ function Header() {
       </Link>
 
       <div className="flex gap-5">
-        <Link
-          href={"/signup"}
-          className="py-2 px-4 cursor-pointer text-white/70 border border-white/40 rounded-lg hover:border-white hover:text-white hover:scale-103 transition-all duration-300"
-        >
-          Sign up
-        </Link>
-        <Link
-          href={"/login"}
-          className="py-2 px-6 cursor-pointer text-white bg-blue-950 rounded-lg hover:bg-blue-900 hover:text-white hover:scale-103 transition-all duration-300"
-        >
+        <Link href={"/login"} className="button-secondary">
           Log in
+        </Link>
+
+        <Link href={"/signup"} className="button-primary">
+          Sign up
         </Link>
       </div>
     </header>
