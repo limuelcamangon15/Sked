@@ -42,10 +42,12 @@ export default function EventsCalendar() {
         throw new Error("failed fetching holiday for " + countryCode);
       const data = await res.json();
 
-      const holidayEvents = data.map((holiday: any) => ({
-        title: holiday.localName,
-        date: holiday.date,
-      }));
+      const holidayEvents = data.map(
+        (holiday: { localName: unknown; date: unknown }) => ({
+          title: holiday.localName,
+          date: holiday.date,
+        })
+      );
 
       setHolidays(holidayEvents);
     } catch (error) {
