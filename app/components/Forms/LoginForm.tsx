@@ -1,7 +1,7 @@
 "use client";
 
-import { loginUser } from "@/app/lib/actions/user";
 import { supabase } from "@/app/lib/supabase";
+import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,12 +10,15 @@ function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-
+    setLoading(true);
     try {
-      const session = await supabase.auth.signInWithPassword({
+      const {
+        data: { session },
+      } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -29,6 +32,7 @@ function LoginForm() {
     } catch (error) {
       console.error("Login failed:", error);
     }
+    setLoading(false);
   }
 
   return (
@@ -86,7 +90,7 @@ function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.currentTarget.value)}
               placeholder="sked@myemail.com"
-              className="outline-0 rounded-lg p-3 bg-gray-900 placeholder:text-white/30"
+              className="input"
             />
           </div>
 
@@ -104,23 +108,21 @@ function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.currentTarget.value)}
               placeholder="••••••••"
-              className="outline-0 rounded-lg p-3 bg-gray-900 tracking-widest placeholder:text-white/30"
+              className="input"
             />
           </div>
 
           <div className="w-100 md:w-1/2 flex flex-col gap-2">
             <button
               type="submit"
-              className="w-full mt-5 py-4 px-6 cursor-pointer text-white bg-blue-950 rounded-lg hover:bg-blue-900 hover:text-white hover:scale-103 transition-all duration-300"
+              className="w-full mt-5 p-3 cursor-pointer text-white bg-blue-950 rounded-lg hover:bg-blue-900 hover:text-white hover:scale-103 transition-all duration-300"
             >
               Log in
+              {loading && <Loader className="animate-spin inline ml-2" />}
             </button>
             <p className="text-center text-white/50 tracking-normal">
               Don&apos;t have an account?{" "}
-              <Link
-                href={"/signup"}
-                className="text-white hover:text-white/70 transition-all duration-300"
-              >
+              <Link href={"/signup"} className="link">
                 Sign up
               </Link>
             </p>

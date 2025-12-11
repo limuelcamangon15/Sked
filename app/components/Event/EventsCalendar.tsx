@@ -33,11 +33,12 @@ export default function EventsCalendar() {
           events={[
             { title: "Christmas Day", date: "2025-12-25" },
             { title: "Monthsary", date: "2025-12-04" },
+            { title: "Araw ng mga Bisaya", date: "2025-12-11" },
           ]}
         />
       </div>
 
-      <button
+      {/*<button
         className="bg-red-600 text-white p-2 cursor-pointer rounded-md"
         onClick={() => {
           supabase.auth.signOut();
@@ -45,7 +46,7 @@ export default function EventsCalendar() {
         }}
       >
         Logout
-      </button>
+      </button>*/}
     </div>
   );
 }

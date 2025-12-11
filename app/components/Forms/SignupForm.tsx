@@ -2,6 +2,7 @@
 
 import { createUser } from "@/app/lib/actions/user";
 import { UserType } from "@/app/types/user";
+import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -16,6 +17,8 @@ function SignupForm() {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
 
@@ -24,6 +27,7 @@ function SignupForm() {
       return;
     }
 
+    setLoading(true);
     const userData = {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -44,6 +48,7 @@ function SignupForm() {
     } else {
       alert(`Signup failed: ${result?.error || "Unknown error"}`);
     }
+    setLoading(false);
   }
 
   return (
@@ -110,7 +115,7 @@ function SignupForm() {
                 })
               }
               placeholder="Enter your first name"
-              className="outline-0 rounded-lg p-3 bg-gray-900 placeholder:text-white/30"
+              className="input"
             />
           </div>
 
@@ -133,15 +138,12 @@ function SignupForm() {
                 })
               }
               placeholder="Enter your last name"
-              className="outline-0 rounded-lg p-3 bg-gray-900 placeholder:text-white/30"
+              className="input"
             />
           </div>
 
           <div className="flex flex-col gap-2 w-100 md:w-1/2">
-            <label
-              htmlFor="lastName"
-              className="text-sm font-thin text-white/70"
-            >
+            <label htmlFor="email" className="text-sm font-thin text-white/70">
               Email Address
             </label>
             <input
@@ -156,13 +158,13 @@ function SignupForm() {
                 })
               }
               placeholder="sked@myemail.com"
-              className="outline-0 rounded-lg p-3 bg-gray-900 placeholder:text-white/30"
+              className="input"
             />
           </div>
 
           <div className="flex flex-col gap-2 w-100 md:w-1/2">
             <label
-              htmlFor="lastName"
+              htmlFor="password"
               className="text-sm font-thin text-white/70"
             >
               Password
@@ -179,23 +181,21 @@ function SignupForm() {
                 })
               }
               placeholder="••••••••"
-              className="outline-0 rounded-lg p-3 bg-gray-900 tracking-widest placeholder:text-white/30"
+              className="input"
             />
           </div>
 
           <div className="w-100 md:w-1/2 flex flex-col gap-2">
             <button
               type="submit"
-              className="w-full mt-5 py-4 px-6 cursor-pointer text-white bg-blue-950 rounded-lg hover:bg-blue-900 hover:text-white hover:scale-103 transition-all duration-300"
+              className="w-full mt-5 p-3 cursor-pointer text-white bg-blue-950 rounded-lg hover:bg-blue-900 hover:text-white hover:scale-103 transition-all duration-300"
             >
               Sign up
+              {loading && <Loader className="animate-spin inline ml-2" />}
             </button>
             <p className="text-center text-white/50 tracking-normal">
               Already have an account?{" "}
-              <Link
-                href={"/login"}
-                className="text-white hover:text-white/70 transition-all duration-300"
-              >
+              <Link href={"/login"} className="link">
                 Log in
               </Link>
             </p>

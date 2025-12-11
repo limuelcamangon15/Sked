@@ -17,3 +17,82 @@ body {
 .button-secondary {
   @apply py-2 px-4 cursor-pointer text-white/70 border border-white/40 rounded-lg hover:border-white hover:text-white hover:scale-103 transition-all duration-300;
 }
+
+.input {
+  @apply outline-0 rounded-lg p-3 bg-gray-900 tracking-wide placeholder:text-white/30 border border-transparent focus:border-white/30;
+}
+
+.link {
+  @apply relative text-white transition-all duration-300 after:absolute after:content-[''] after:bg-white after:left-0 after:-bottom-1 after:w-0 after:h-[1px] after:transition-all after:duration-300 hover:after:w-full hover:text-white/70;
+}
+
+/* full calendar */
+
+.fc {
+  @apply bg-white rounded-xl p-5;
+}
+
+.fc .fc-toolbar-title {
+  @apply text-black font-bold;
+}
+
+.fc .fc-col-header-cell {
+  @apply text-black;
+}
+
+.fc .fc-toolbar {
+  @apply flex justify-between mb-4;
+}
+
+.fc .fc-toolbar-chunk {
+  @apply flex;
+}
+
+.fc .fc-toolbar-chunk .fc-button-group .fc-next-button,
+.fc .fc-toolbar-chunk .fc-button-group .fc-prev-button {
+  @apply hover:scale-115 transition-all duration-300;
+}
+
+.fc .fc-toolbar-chunk .fc-button-group {
+  @apply flex gap-2;
+}
+
+.fc .fc-toolbar .fc-button {
+  @apply flex flex-row gap-2 hover:scale-105 transition-all capitalize;
+}
+
+.fc .fc-button {
+  @apply bg-blue-950 text-white rounded px-3 py-1 hover:bg-blue-900;
+}
+
+.fc .fc-button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.fc .fc-daygrid-event {
+  @apply text-black rounded px-1 py-0.5 mb-1;
+}
+
+.fc .fc-daygrid .fc-day-today .fc-daygrid-day-number {
+  @apply text-center text-white rounded-full w-7 h-fit m-1 border;
+}
+
+.fc .fc-daygrid .fc-day-today {
+  background: radial-gradient(
+    125% 125% at 50% 100%,
+    #000000da 0%,
+    #17177cd3 100%
+  );
+}
+
+.fc .fc-daygrid .fc-day-today .fc-daygrid-event {
+  @apply bg-transparent border border-white/20 drop-shadow-md drop-shadow-amber-500;
+}
+
+.fc .fc-daygrid .fc-event {
+  @apply text-xs;
+}
+
+.fc .fc-daygrid-day-number {
+  @apply text-black text-sm font-thin;
+}
