@@ -32,6 +32,10 @@ body {
   @apply bg-white rounded-xl p-5;
 }
 
+.fc table {
+  @apply rounded-xl overflow-hidden;
+}
+
 .fc .fc-toolbar-title {
   @apply text-black font-bold;
 }
@@ -70,23 +74,23 @@ body {
 }
 
 .fc .fc-daygrid-event {
-  @apply text-black rounded px-1 py-0.5 mb-1;
+  @apply text-black rounded px-1 py-0.5 mb-1 bg-blue-800/70;
 }
 
 .fc .fc-daygrid .fc-day-today .fc-daygrid-day-number {
-  @apply text-center text-white rounded-full w-7 h-fit m-1 border;
+  @apply text-center text-white rounded-full w-7 h-fit m-1 shadow-xs shadow-white;
 }
 
 .fc .fc-daygrid .fc-day-today {
   background: radial-gradient(
-    125% 125% at 50% 100%,
+    125% 125% at 20% 100%,
     #000000da 0%,
     #17177cd3 100%
   );
 }
 
 .fc .fc-daygrid .fc-day-today .fc-daygrid-event {
-  @apply bg-transparent border border-white/20 drop-shadow-md drop-shadow-amber-500;
+  @apply bg-transparent bg-yellow-500/20 border-none shadow-sm shadow-yellow-500;
 }
 
 .fc .fc-daygrid .fc-event {
