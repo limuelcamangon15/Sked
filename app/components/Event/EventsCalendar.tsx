@@ -42,7 +42,7 @@ export default function EventsCalendar() {
         throw new Error("failed fetching holiday for " + countryCode);
       const data = await res.json();
 
-      const holidayEvents = data.map((holiday) => ({
+      const holidayEvents = data.map((holiday: any) => ({
         title: holiday.localName,
         date: holiday.date,
       }));
