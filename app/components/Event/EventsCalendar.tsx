@@ -56,6 +56,23 @@ export default function EventsCalendar() {
     }
   }
 
+  async function pushHolidaysToMSTeams({
+    title,
+    date,
+  }: {
+    title: string;
+    date: string;
+  }) {
+    await fetch("/api/push-events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ title, date }),
+    });
+
+    alert("PUSHED TO MSTEAMS");
+  }
+
   if (loading) return <p>Loading...</p>;
   return (
     <div className="w-full min-h-dvh flex flex-col p-5">
@@ -75,15 +92,29 @@ export default function EventsCalendar() {
         />
       </div>
 
-      {/*<button
-        className="bg-red-600 text-white p-2 cursor-pointer rounded-md"
-        onClick={() => {
-          supabase.auth.signOut();
-          router.push("/login");
-        }}
+      <button
+        onClick={() =>
+          pushHolidaysToMSTeams({
+            title: "Araw ng Pasko",
+            date: "2025-12-25",
+          })
+        }
+        className="bg-green-500 rounded cursor-pointer"
       >
-        Logout
-      </button>*/}
+        PUSH TO MSTEAMS
+      </button>
+
+      {
+        <button
+          className="bg-red-600 text-white p-2 cursor-pointer rounded-md"
+          onClick={() => {
+            supabase.auth.signOut();
+            router.push("/login");
+          }}
+        >
+          Logout
+        </button>
+      }
     </div>
   );
 }
