@@ -26,6 +26,7 @@ function LoginForm() {
       console.log(session);
 
       if (session) {
+        window.location.href = "/api/auth/login";
         router.refresh();
         router.push("/event");
       }

@@ -12,8 +12,10 @@ export async function GET() {
 
   const authUrl = await pca.getAuthCodeUrl({
     scopes: ["User.Read", "Calendars.ReadWrite"],
-    redirectUri: `${process.env.NEXT_PUBLIC_URL}/api/auth/redirect`,
+    redirectUri: "http://localhost:3000/api/auth/redirect",
   });
+
+  console.log(authUrl);
 
   return NextResponse.redirect(authUrl);
 }

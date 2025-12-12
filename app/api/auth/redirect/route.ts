@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { ConfidentialClientApplication } from "@azure/msal-node";
 
+export const runtime = "nodejs";
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
@@ -15,17 +17,27 @@ export async function GET(req: Request) {
     },
   });
 
-  const token = await pca.acquireTokenByCode({
-    code,
-    scopes: ["User.Read", "Calendars.ReadWrite"],
-    redirectUri: `${process.env.NEXT_PUBLIC_URL}/api/auth/redirect`,
-  });
+  let token;
+  try {
+    token = await pca.acquireTokenByCode({
+      code,
+      scopes: ["User.Read", "Calendars.ReadWrite"],
+      redirectUri: "http://localhost:3000/api/auth/redirect",
+    });
+  } catch (err) {
+    console.error("Token exchange failed:", err);
+    return NextResponse.json(
+      { error: "Failed to exchange code for token" },
+      { status: 500 }
+    );
+  }
 
-  const res = NextResponse.redirect("/event");
+  const res = NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/event`);
   res.cookies.set("ms_access_token", token.accessToken!, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     maxAge: 3600,
+    path: "/",
   });
 
   return res;

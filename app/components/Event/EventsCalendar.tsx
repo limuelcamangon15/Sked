@@ -66,8 +66,8 @@ export default function EventsCalendar() {
     await fetch("/api/push-events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
       body: JSON.stringify({ title, date }),
+      credentials: "include",
     });
 
     alert("PUSHED TO MSTEAMS");
