@@ -32,6 +32,18 @@ export async function GET(req: Request) {
     );
   }
 
+  const payload = JSON.parse(
+    Buffer.from(token.accessToken!.split(".")[1], "base64").toString()
+  );
+
+  console.log("SCOPES IN TOKEN:", payload.scp);
+  console.log(
+    "AUDIENCE:",
+    JSON.parse(
+      Buffer.from(token.accessToken!.split(".")[1], "base64").toString()
+    ).aud
+  );
+
   const res = NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/event`);
   res.cookies.set("ms_access_token", token.accessToken!, {
     httpOnly: true,

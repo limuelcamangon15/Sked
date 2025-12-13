@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { Client } from "@microsoft/microsoft-graph-client";
 export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("ms_access_token")?.value;
@@ -47,6 +48,15 @@ export async function POST(req: Request) {
       { status: 401 }
     );
   }
+  const payload = JSON.parse(
+    Buffer.from(accessToken.split(".")[1], "base64").toString()
+  );
+
+  console.log("TOKEN SENT TO GRAPH:", {
+    aud: payload.aud,
+    scp: payload.scp,
+    exp: payload.exp,
+  });
 
   try {
     await graph.api("/me/events").post(event);
