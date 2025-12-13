@@ -7,50 +7,49 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
 
-  if (!code) return NextResponse.redirect("/");
+  if (!code) {
+    console.error("No auth code returned");
+    return NextResponse.redirect("http://localhost:3000/");
+  }
 
   const pca = new ConfidentialClientApplication({
     auth: {
       clientId: process.env.AZURE_CLIENT_ID!,
       clientSecret: process.env.AZURE_CLIENT_SECRET!,
-      authority: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}`,
+      authority: "https://login.microsoftonline.com/common",
     },
   });
 
-  let token;
   try {
-    token = await pca.acquireTokenByCode({
+    const token = await pca.acquireTokenByCode({
       code,
-      scopes: ["User.Read", "Calendars.ReadWrite"],
+      scopes: [
+        "https://graph.microsoft.com/User.Read",
+        "https://graph.microsoft.com/Calendars.ReadWrite",
+      ],
       redirectUri: "http://localhost:3000/api/auth/redirect",
     });
-  } catch (err) {
-    console.error("Token exchange failed:", err);
+
+    if (!token?.accessToken) {
+      throw new Error("No access token returned");
+    }
+
+    const res = NextResponse.redirect("http://localhost:3000/event");
+
+    res.cookies.set("ms_access_token", token.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60,
+      path: "/",
+    });
+
+    return res;
+  } catch (err: any) {
+    console.error("MSAL ERROR:", err);
     return NextResponse.json(
-      { error: "Failed to exchange code for token" },
+      { error: "Authentication failed", details: err.message },
       { status: 500 }
     );
   }
-
-  const payload = JSON.parse(
-    Buffer.from(token.accessToken!.split(".")[1], "base64").toString()
-  );
-
-  console.log("SCOPES IN TOKEN:", payload.scp);
-  console.log(
-    "AUDIENCE:",
-    JSON.parse(
-      Buffer.from(token.accessToken!.split(".")[1], "base64").toString()
-    ).aud
-  );
-
-  const res = NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/event`);
-  res.cookies.set("ms_access_token", token.accessToken!, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 3600,
-    path: "/",
-  });
-
-  return res;
 }

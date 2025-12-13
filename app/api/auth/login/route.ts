@@ -6,13 +6,17 @@ export async function GET() {
     auth: {
       clientId: process.env.AZURE_CLIENT_ID!,
       clientSecret: process.env.AZURE_CLIENT_SECRET!,
-      authority: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}`,
+      authority: `https://login.microsoftonline.com/common`,
     },
   });
 
   const authUrl = await pca.getAuthCodeUrl({
-    scopes: ["User.Read", "Calendars.ReadWrite"],
+    scopes: [
+      "https://graph.microsoft.com/User.Read",
+      "https://graph.microsoft.com/Calendars.ReadWrite",
+    ],
     redirectUri: "http://localhost:3000/api/auth/redirect",
+    responseMode: "query",
   });
 
   console.log(authUrl);

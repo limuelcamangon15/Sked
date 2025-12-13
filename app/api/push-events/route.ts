@@ -27,12 +27,12 @@ export async function POST(req: Request) {
   const event = {
     subject: title,
     start: {
-      dateTime: `${date}T00:00:00`,
-      timeZone: "Asia/Manila",
+      dateTime: `${date}T12:32:40.871Z`,
+      timeZone: "UTC",
     },
     end: {
-      dateTime: `${date}T23:59:59`,
-      timeZone: "Asia/Manila",
+      dateTime: `${date}T12:32:40.871Z`,
+      timeZone: "UTC",
     },
   };
 
@@ -41,26 +41,17 @@ export async function POST(req: Request) {
   try {
     const me = await graph.api("/me").get();
     console.log("Graph /me result:", me);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Graph /me error:", error);
     return NextResponse.json(
       { error: "Graph /me failed", details: error.message },
       { status: 401 }
     );
   }
-  const payload = JSON.parse(
-    Buffer.from(accessToken.split(".")[1], "base64").toString()
-  );
-
-  console.log("TOKEN SENT TO GRAPH:", {
-    aud: payload.aud,
-    scp: payload.scp,
-    exp: payload.exp,
-  });
 
   try {
     await graph.api("/me/events").post(event);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Graph /me/events post error:", error);
     return NextResponse.json(
       { error: "Failed to add event", details: error.message },
@@ -68,5 +59,5 @@ export async function POST(req: Request) {
     );
   }
 
-  return NextResponse.json({ message: "Event added to MS Teams!" });
+  return NextResponse.json({ message: "Event added to Microsoft Calendar!" });
 }

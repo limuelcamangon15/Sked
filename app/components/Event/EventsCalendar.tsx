@@ -95,8 +95,8 @@ export default function EventsCalendar() {
       <button
         onClick={() =>
           pushHolidaysToMSTeams({
-            title: "Araw ng Pasko",
-            date: "2025-12-25",
+            title: "Monthsary",
+            date: "2025-12-04",
           })
         }
         className="bg-green-500 rounded cursor-pointer"
