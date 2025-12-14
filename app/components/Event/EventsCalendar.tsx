@@ -58,8 +58,9 @@ export default function EventsCalendar() {
       const mergedHolidayEvents = responses.flatMap((data, index) => {
         const country = COUNTRIES[index];
 
-        return data.map((holiday: { localName: string; date: string }) => ({
-          title: `${holiday.localName} (${country.code})`,
+        // change (name) to (localName) if not need to use English as label
+        return data.map((holiday: { name: string; date: string }) => ({
+          title: `${holiday.name} (${country.code})`,
           date: holiday.date,
           backgroundColor: country.color,
           countryCode: country.code,
@@ -113,11 +114,16 @@ export default function EventsCalendar() {
     <div className="w-full min-h-dvh flex flex-col p-5 gap-2">
       <div className="flex gap-5 w-full items-center justify-center">
         <button
-          onClick={() => pushHolidaysToMSTeams()}
-          className="button-primary hover:drop-shadow-lg hover:drop-shadow-amber-50"
+          onClick={pushHolidaysToMSTeams}
+          disabled={syncLoading}
+          className={`button-primary ${
+            syncLoading
+              ? "opacity-50 cursor-not-allowed!"
+              : "hover:drop-shadow-lg hover:drop-shadow-amber-50"
+          }`}
         >
           {syncLoading ? "Syncing..." : "Sync with Teams"}
-          {syncLoading && <Loader className="inline animate-spin" />}
+          {syncLoading && <Loader className="inline animate-spin ml-2" />}
         </button>
       </div>
       <div className="grow">

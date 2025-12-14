@@ -29,7 +29,7 @@ function LoginForm() {
         window.location.href = "/api/auth/login";
         router.refresh();
 
-        // no longer needed, the api/auth/login will redirect after setting cookies and
+        // no longer needed, the api/auth/login will redirect after setting cookies
         //router.push("/event");
       }
     } catch (error) {
