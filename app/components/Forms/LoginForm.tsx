@@ -28,7 +28,9 @@ function LoginForm() {
       if (session) {
         window.location.href = "/api/auth/login";
         router.refresh();
-        router.push("/event");
+
+        // no longer needed, the api/auth/login will redirect after setting cookies and
+        //router.push("/event");
       }
     } catch (error) {
       console.error("Login failed:", error);

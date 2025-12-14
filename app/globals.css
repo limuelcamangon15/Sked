@@ -94,9 +94,9 @@ body {
 }
 
 .fc .fc-daygrid .fc-event {
-  @apply text-xs text-wrap;
+  @apply text-xs text-wrap border-none;
 }
 
 .fc .fc-daygrid-day-number {
-  @apply text-black text-sm font-thin;
+  @apply text-black text-sm font-thin mr-3;
 }

@@ -9,18 +9,20 @@ import { Loader } from "lucide-react";
 export default function EventsCalendar() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [syncLoding, setSyncLoading] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
   const [holidays, setHolidays] = useState([]);
-  const [country, setCountry] = useState("US");
+  //const [country, setCountry] = useState("PH");
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  const COUNTRIES = [
+    { code: "US", name: "USA", color: "#1E293B" }, // deep slate blue
+    { code: "KR", name: "Korea", color: "#3F1D1D" }, // dark muted red
+    { code: "PH", name: "Philippines", color: "#1F3D2B" }, // deep forest green
+  ];
 
   useEffect(() => {
     checkSession();
   }, []);
-
-  useEffect(() => {
-    fetchHolidays(country);
-  }, [country]);
 
   async function checkSession() {
     const {
@@ -30,16 +32,46 @@ export default function EventsCalendar() {
     if (!session) {
       router.push("/login");
     } else {
-      await fetchHolidays(country);
+      await fetchHolidays(currentYear);
       setLoading(false);
     }
   }
 
-  async function fetchHolidays(
-    countryCode: string,
-    year: number = new Date().getFullYear()
-  ) {
+  async function fetchHolidays(year: number = new Date().getFullYear()) {
     try {
+      const requests = COUNTRIES.map((country) =>
+        fetch(
+          `https://date.nager.at/api/v3/PublicHolidays/${year}/${country.code}`
+        ).then((res) => {
+          if (!res.ok) {
+            throw new Error(
+              "error getting holidays for country" + country.code
+            );
+          }
+
+          return res.json();
+        })
+      );
+
+      const responses = await Promise.all(requests);
+
+      const mergedHolidayEvents = responses.flatMap((data, index) => {
+        const country = COUNTRIES[index];
+
+        return data.map((holiday: { localName: string; date: string }) => ({
+          title: `${holiday.localName} (${country.code})`,
+          date: holiday.date,
+          backgroundColor: country.color,
+          countryCode: country.code,
+        }));
+      });
+
+      setHolidays(mergedHolidayEvents);
+    } catch (error) {
+      console.error("Error fetching holidays:", error);
+    }
+
+    /*try {
       const res = await fetch(
         `https://date.nager.at/api/v3/PublicHolidays/${year}/${countryCode}`
       );
@@ -59,7 +91,7 @@ export default function EventsCalendar() {
       setHolidays(holidayEvents);
     } catch (error) {
       console.error("Error fetching holidays:", error);
-    }
+    }*/
   }
 
   async function pushHolidaysToMSTeams() {
@@ -84,20 +116,9 @@ export default function EventsCalendar() {
           onClick={() => pushHolidaysToMSTeams()}
           className="button-primary hover:drop-shadow-lg hover:drop-shadow-amber-50"
         >
-          Sync with Teams{" "}
-          {syncLoding && <Loader className="inline animate-spin" />}
+          {syncLoading ? "Syncing..." : "Sync with Teams"}
+          {syncLoading && <Loader className="inline animate-spin" />}
         </button>
-
-        <select
-          className="text-black bg-white/50 cursor-pointer rounded"
-          name="country"
-          id="country"
-          onChange={(e) => setCountry(e.currentTarget.value)}
-        >
-          <option value="US">USA</option>
-          <option value="KR">Korea</option>
-          <option value="PH">Philippines</option>
-        </select>
       </div>
       <div className="grow">
         <FullCalendar
@@ -105,10 +126,11 @@ export default function EventsCalendar() {
           plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
           datesSet={(info) => {
-            const year = info.start.getFullYear();
+            const year = info.view.currentStart.getFullYear();
+            console.log("this year is", year);
             if (year !== currentYear) {
               setCurrentYear(year);
-              fetchHolidays(country, year);
+              fetchHolidays(year);
             }
           }}
           events={holidays}
