@@ -15,29 +15,29 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { title, date } = body;
+  const { holidays } = body;
 
-  console.log("TITLE" + title + "     Date: " + date);
   const graph = Client.init({
     authProvider: (done) => done(null, accessToken),
   });
 
   console.log("ABOT DITO");
 
-  const event = {
+  /*const event = {
     subject: title,
     start: {
-      dateTime: `${date}T12:32:40.871Z`,
-      timeZone: "UTC",
+      dateTime: `${date}T00:00:00`,
+      timeZone: "Asia/Manila",
     },
     end: {
-      dateTime: `${date}T12:32:40.871Z`,
-      timeZone: "UTC",
+      dateTime: `${date}T23:59:59`,
+      timeZone: "Asia/Manila",
     },
   };
 
-  console.log(event);
+  console.log(event);*/
 
+  //test
   try {
     const me = await graph.api("/me").get();
     console.log("Graph /me result:", me);
@@ -49,14 +49,28 @@ export async function POST(req: Request) {
     );
   }
 
-  try {
-    await graph.api("/me/events").post(event);
-  } catch (error: any) {
-    console.error("Graph /me/events post error:", error);
-    return NextResponse.json(
-      { error: "Failed to add event", details: error.message },
-      { status: 500 }
-    );
+  for (const holiday of holidays) {
+    const event = {
+      subject: holiday.title,
+      start: {
+        dateTime: `${holiday.date}T00:00:00`,
+        timeZone: "Asia/Manila",
+      },
+      end: {
+        dateTime: `${holiday.date}T23:59:59`,
+        timeZone: "Asia/Manila",
+      },
+    };
+
+    try {
+      await graph.api("/me/events").post(event);
+    } catch (error: any) {
+      console.error("Graph /me/events post error:", error);
+      return NextResponse.json(
+        { error: "Failed to add event", details: error.message },
+        { status: 500 }
+      );
+    }
   }
 
   return NextResponse.json({ message: "Event added to Microsoft Calendar!" });

@@ -4,17 +4,23 @@ import { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { supabase } from "@/app/lib/supabase";
+import { Loader } from "lucide-react";
 
 export default function EventsCalendar() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [syncLoding, setSyncLoading] = useState(false);
   const [holidays, setHolidays] = useState([]);
-  const [country, setCountry] = useState("PH");
+  const [country, setCountry] = useState("US");
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
     checkSession();
   }, []);
+
+  useEffect(() => {
+    fetchHolidays(country);
+  }, [country]);
 
   async function checkSession() {
     const {
@@ -56,26 +62,43 @@ export default function EventsCalendar() {
     }
   }
 
-  async function pushHolidaysToMSTeams({
-    title,
-    date,
-  }: {
-    title: string;
-    date: string;
-  }) {
+  async function pushHolidaysToMSTeams() {
+    setSyncLoading(true);
+
     await fetch("/api/push-events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, date }),
+      body: JSON.stringify({ holidays }),
       credentials: "include",
     });
 
-    alert("PUSHED TO MSTEAMS");
+    setSyncLoading(false);
+    alert("Synced success");
   }
 
   if (loading) return <p>Loading...</p>;
   return (
-    <div className="w-full min-h-dvh flex flex-col p-5">
+    <div className="w-full min-h-dvh flex flex-col p-5 gap-2">
+      <div className="flex gap-5 w-full items-center justify-center">
+        <button
+          onClick={() => pushHolidaysToMSTeams()}
+          className="button-primary hover:drop-shadow-lg hover:drop-shadow-amber-50"
+        >
+          Sync with Teams{" "}
+          {syncLoding && <Loader className="inline animate-spin" />}
+        </button>
+
+        <select
+          className="text-black bg-white/50 cursor-pointer rounded"
+          name="country"
+          id="country"
+          onChange={(e) => setCountry(e.currentTarget.value)}
+        >
+          <option value="US">USA</option>
+          <option value="KR">Korea</option>
+          <option value="PH">Philippines</option>
+        </select>
+      </div>
       <div className="grow">
         <FullCalendar
           height="100%"
@@ -92,28 +115,18 @@ export default function EventsCalendar() {
         />
       </div>
 
-      <button
-        onClick={() =>
-          pushHolidaysToMSTeams({
-            title: "Monthsary",
-            date: "2025-12-04",
-          })
-        }
-        className="bg-green-500 rounded cursor-pointer"
-      >
-        PUSH TO MSTEAMS
-      </button>
-
       {
-        <button
-          className="bg-red-600 text-white p-2 cursor-pointer rounded-md"
-          onClick={() => {
-            supabase.auth.signOut();
-            router.push("/login");
-          }}
-        >
-          Logout
-        </button>
+        <div className="flex justify-end">
+          <button
+            className="bg-red-600 w-40 text-white p-2 cursor-pointer rounded-md"
+            onClick={() => {
+              supabase.auth.signOut();
+              router.push("/login");
+            }}
+          >
+            Logout
+          </button>
+        </div>
       }
     </div>
   );
